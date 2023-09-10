@@ -10,6 +10,6 @@
   "author": "turisouvenir",
   "license": "ISC",
   "dependencies": {
-    "html-to-object-converter": "^0.1.0"
+    "html-to-object-converter": "^0.2.0"
   }
 }
