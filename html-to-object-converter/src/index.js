@@ -15,55 +15,72 @@ function htmlToObject(html) {
     return parseElement(document.body.firstChild);
   }
 }
+
 // Helper function to recursively parse HTML elements
 function parseElement(element) {
   const obj = {
     tag: element.tagName.toLowerCase(),
   };
 
-  // Check if there is an id attribute
-  const idAttribute = element.getAttribute("id");
-  if (idAttribute) {
-    obj.id = idAttribute;
+  // Handle the style attribute
+  const styleAttr = element.getAttribute("style");
+  if (styleAttr) {
+    obj.style = parseStyles(styleAttr);
   }
 
-  // Check if there is a direct text child node
-  const directTextChild = Array.from(element.childNodes).find(
-    (node) => node.nodeType === 3 && node.textContent.trim() !== ""
+  // Add other attributes to the object
+  for (let i = 0; i < element.attributes.length; i++) {
+    const attr = element.attributes[i];
+    if (attr.name !== "style") {
+      // Check if the attribute value contains spaces and convert it to an array
+      obj[attr.name] = attr.value.includes(" ")
+        ? attr.value.split(" ")
+        : attr.value;
+    }
+  }
+
+  // Check if there is text content
+  const textNodes = Array.from(element.childNodes).filter(
+    (childNode) => childNode.nodeType === 3 && childNode.textContent.trim() !== ""
   );
-  if (directTextChild) {
-    obj.text = directTextChild.textContent.trim();
+  if (textNodes.length === 1) {
+    obj.text = textNodes[0].textContent.trim();
   }
 
-  // Recursively process non-empty children elements
-  const nonEmptyChildren = Array.from(element.children)
-    .map(parseElement)
-    .filter((child) => !!child.text || !!child.children);
-
-  // Add style property if styles are present
-  const styles = parseStyles(element.getAttribute("style"));
-  if (Object.keys(styles).length > 0) {
-    obj.style = styles;
+  // Handle self-closing elements
+  if (element.childNodes.length === 0) {
+    return obj;
   }
 
-  if (nonEmptyChildren.length > 0) {
-    obj.children = nonEmptyChildren;
+  // Recursively process children elements
+  const children = Array.from(element.childNodes).map((childNode) => {
+    if (childNode.nodeType === 1) {
+      return parseElement(childNode);
+    } else {
+      return null;
+    }
+  }).filter(Boolean);
+
+  if (children.length > 0) {
+    obj.children = children;
   }
 
   return obj;
 }
 
-// Helper function to parse styles attribute into an object
+// Helper function to parse styles attribute into an object with camelCase property names
 function parseStyles(styleAttr) {
-  if (!styleAttr) return {};
+  const styleObj = {};
 
-  return styleAttr.split(";").reduce((styleObj, style) => {
+  styleAttr.split(";").forEach((style) => {
     const [key, value] = style.split(":").map((s) => s.trim());
     if (key && value) {
-      styleObj[camelCase(key)] = value;
+      // Convert property name to camelCase
+      styleObj[camelCase(key)] = value.includes(" ") ? value.split(" ") : value;
     }
-    return styleObj;
-  }, {});
+  });
+
+  return styleObj;
 }
 
 // Helper function to convert a string to camelCase

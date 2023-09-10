@@ -17,37 +17,38 @@ describe('htmlToObject', () => {
     `;
 
     const expectedObject = {
-      "tag": "div",
-      "id": "first-div",
-      "text": "Hello, friends",
-      "style": {
-        "backgroundColor": "yellow",      
-        "fontSize": "14px"
+      tag: 'div',
+      style: {
+        backgroundColor: 'yellow',
+        fontSize: '14px',
       },
-      "children": [
+      id: 'first-div',
+      text: 'Hello, friends',
+      children: [
         {
-          "tag": "p",
-          "text": "Lorem ipsum dolor sit",
-          "style": {
-            "fontFamily": "monospace",
-            "fontSize": "11px"
-          }
+          tag: 'p',
+          style: {
+            fontFamily: 'monospace',
+            fontSize: '11px',
+          },
+          class: 'para',
+          text: 'Lorem ipsum dolor sit',
         },
         {
-          "tag": "footer",
-          "style": {
-            "width": "auto",
-            "height": "100px",
-            "color": "blue"
+          tag: 'footer',
+          style: {
+            width: 'auto',
+            height: '100px',
+            color: 'blue',
           },
-          "children": [
+          children: [
             {
-              "tag": "span",
-              "text": "This is the end"
-            }
-          ]
-        }
-      ]
+              tag: 'span',
+              text: 'This is the end',
+            },
+          ],
+        },
+      ],
     };
     const result = htmlToObject(html);
     expect(result).toEqual(expectedObject);
