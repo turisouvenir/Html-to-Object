@@ -1,0 +1,15 @@
+{
+  "name": "demoexamples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "turisouvenir",
+  "license": "ISC",
+  "dependencies": {
+    "html-to-object-converter": "^0.1.0"
+  }
+}
